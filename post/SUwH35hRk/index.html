@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Blender 2D图片转为3D模型并绑定骨骼 | Sqrt9</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://ayosi1996.github.io/favicon.ico?v=1679230816049">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ayosi1996.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="
+最终效果演示：
+
+原始图片：
+
+
+生成网格
+
+
+使用Images as Planes导入Tracer-Tpose.png
+
+
+将生成的Planes细分多次，然后删除多余的顶点（大概形状就行）
+
+
+
+绑定骨骼
+
+
+Shift+A 新建Bas..." />
+    <meta name="keywords" content="Blender" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://ayosi1996.github.io">
+        <img src="https://ayosi1996.github.io/images/avatar.png?v=1679230816049" class="site-logo">
+        <h1 class="site-title">Sqrt9</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://ayosi1996.github.io" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="https://ayosi1996.github.io/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://ayosi1996.github.io/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/Sqrt9SD" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Hi there!
+    </div>
+    <div class="site-footer">
+      Powered by Gridea | <a class="rss" href="https://ayosi1996.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Blender 2D图片转为3D模型并绑定骨骼</h2>
+            <div class="post-date">2019-05-30</div>
+            
+              <div class="feature-container" style="background-image: url('https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/blender_ikfk_snap/2020031700123124.jpg')">
+              </div>
+            
+            <div class="post-content" v-pre>
+              <!--more-->
+<h2 id="最终效果演示">最终效果演示：</h2>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/2dTo3d/1584293048573.gif" alt="" loading="lazy"></figure>
+<h2 id="原始图片">原始图片：</h2>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/2dTo3d/1584293062377.png" alt="" loading="lazy"></figure>
+<hr>
+<h2 id="生成网格"><strong>生成网格</strong></h2>
+<ul>
+<li>
+<p>使用Images as Planes导入Tracer-Tpose.png</p>
+</li>
+<li>
+<p>将生成的Planes细分多次，然后删除多余的顶点（大概形状就行）<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/2dTo3d/1584293071593.png" alt="" loading="lazy"></p>
+</li>
+</ul>
+<h2 id="绑定骨骼"><strong>绑定骨骼</strong></h2>
+<ul>
+<li>
+<p>Shift+A 新建Basic Human Armature</p>
+</li>
+<li>
+<p>将骨架与模型位置匹配<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/2dTo3d/1584293078089.png" alt="" loading="lazy"></p>
+</li>
+<li>
+<p>在Object Mode依次选中2D模型和骨架，然后按Ctrl+P，选自动权重</p>
+</li>
+<li>
+<p>绑定完成</p>
+</li>
+</ul>
+<h2 id="动作绑定"><strong>动作绑定</strong></h2>
+<ul>
+<li>Blender导出FBX，不导出灯光和相机</li>
+<li>在Mixamo中绑定动作</li>
+<li>下载绑定动作后的FBX</li>
+</ul>
+<h2 id="材质贴图"><strong>材质贴图</strong></h2>
+<ul>
+<li>导入FBX到Blender</li>
+<li>编辑Shading node(EEVEE渲染需要将Material Blend Mode改为Alpha Blend/Hashed)<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/2dTo3d/1584293085104.png" alt="" loading="lazy"></li>
+</ul>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://ayosi1996.github.io/tag/qoVlYcAAe/" class="tag">
+                    Blender
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://ayosi1996.github.io/post/vDhd-ksEv/">
+                  <h3 class="post-title">
+                    Unity Shader基础入门
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+
+  </body>
+</html>

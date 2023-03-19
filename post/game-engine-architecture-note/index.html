@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>《游戏引擎架构》提炼 | Sqrt9</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://ayosi1996.github.io/favicon.ico?v=1679230816049">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ayosi1996.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="记录《游戏引擎架构》中值得学习的要点
+
+全书结构
+
+基础
+运行时引擎架构
+游戏引擎通常由工具套件和运行时组件两部分构成。如同所有软件系统，游戏引擎也是以软件层构建的。通常上层依赖下层，下层不依赖上层。
+
+工具及资产管线
+下图描述了现代游戏引..." />
+    <meta name="keywords" content="Note" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://ayosi1996.github.io">
+        <img src="https://ayosi1996.github.io/images/avatar.png?v=1679230816049" class="site-logo">
+        <h1 class="site-title">Sqrt9</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://ayosi1996.github.io" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="https://ayosi1996.github.io/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://ayosi1996.github.io/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/Sqrt9SD" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Hi there!
+    </div>
+    <div class="site-footer">
+      Powered by Gridea | <a class="rss" href="https://ayosi1996.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">《游戏引擎架构》提炼</h2>
+            <div class="post-date">2020-06-29</div>
+            
+              <div class="feature-container" style="background-image: url('https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/20230318230713.png')">
+              </div>
+            
+            <div class="post-content" v-pre>
+              <p>记录《游戏引擎架构》中值得学习的要点</p>
+<!-- more -->
+<h1 id="font-color-0077bb全书结构font"><font color = #0077bb>全书结构</font></h1>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/978d28e541394a6da76efad708a8d5f1.png" alt="请添加图片描述" loading="lazy"></figure>
+<h1 id="font-color-0077bb基础font"><font color = #0077bb>基础</font></h1>
+<h2 id="font-color-0076ba运行时引擎架构font"><font color = #0076ba>运行时引擎架构</font></h2>
+<p>游戏引擎通常由工具套件和运行时组件两部分构成。如同所有软件系统，游戏引擎也是以软件层构建的。通常上层依赖下层，下层不依赖上层。<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/3dc180b5823d4ebbb38c9462d93ef34a.png" alt="请添加图片描述" loading="lazy"></p>
+<h2 id="font-color-0076ba工具及资产管线font"><font color = #0076ba>工具及资产管线</font></h2>
+<p>下图描述了现代游戏引擎中常见的游戏资产。图中，深灰色粗线箭头，指明数据如何从制作原始资产的工具一直流到游戏引擎本身；浅灰色细线箭头，表示各类资源会参考或应用到其他资源。<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/b6a68086b8f24e51a140eb85c6b1ceba.png" alt="请添加图片描述" loading="lazy"></p>
+<h2 id="font-color-0076ba源文件执行font"><font color = #0076ba>源文件执行</font></h2>
+<ul>
+<li>因为编译器每次只<strong>翻译</strong>一个C++源文件至机器码，所以源文件也被称为<strong>翻译单元</strong>。</li>
+<li><strong>头文件</strong>通常用于在多个翻译单元之间分享信息，例如类型声明及函数原型。编译器并不知悉头文件，在编译之前C++预处理器预先把每个<code>#include</code>语句替换为对应的头文件内容，然后再把翻译单元送交编译器。</li>
+<li>编译之后的机器码会储存在对象文件中（.obj（Windows）或.o（Unix））。对象文件中的机器码是：
+<ul>
+<li><strong>可重定位的</strong>：代码的内存地址未决定。</li>
+<li><strong>未链接的</strong>：未解决外部函数参考，以及翻译单元外定义的全局数据。</li>
+</ul>
+</li>
+<li>对象文件可以集合成<strong>程序库</strong>，允许把大量的对象文件集合成单个易用的文件。</li>
+<li>链接器把对象文件和程序库<strong>链接</strong>成可执行文件。链接的过程包含：
+<ul>
+<li>计算全部机器码的最终<strong>相对地址</strong></li>
+<li>确保正确的解析每个对象文件的所有外部函数参考和全局数据</li>
+</ul>
+</li>
+</ul>
+<h1 id="font-color-0077bb游戏软件工程基础font"><font color = #0077bb>游戏软件工程基础</font></h1>
+<h2 id="font-color-0076ba面向对象编程font"><font color = #0076ba>面向对象编程</font></h2>
+<ul>
+<li><strong>类</strong> 是数据和代码指令的集合， 共同组成有用又有意义的整体</li>
+<li><strong>封装</strong>  对象向外只提供有限接口，隐藏对象的内部状态和实现细节</li>
+<li><strong>继承</strong> 能借着延伸现有的类去定义新的类。新类可修改或延伸现有类的数据、接口和行为</li>
+<li><strong>多态</strong> 是一种语言特征，容许采用单一共同接口操作一组不同类型的对象。主要通过虚函数来实现</li>
+<li><strong>设计模式</strong> 推荐阅读：<a href="https://gpp.tkchu.me/">《游戏设计模式》</a></li>
+</ul>
+<h2 id="font-color-0076ba左右值font"><font color = #0076ba>左右值</font></h2>
+<p>在C和C++中，左值表示计算机寄存器或内存中的实际存储位置。而右值是临时数据对象，它只是逻辑上存在但非必须占用内存。比如写 <code>int a = 7</code> 时，变量a是左值，而字面值7是右值。可以为左值赋值，但是不能为右值赋值。</p>
+<h2 id="font-color-0076ba数据表示font"><font color = #0076ba>数据表示</font></h2>
+<h3 id="font-color-0066aa浮点数font"><font color = #0066aa>浮点数</font></h3>
+<p>浮点数曾经被科学家用<strong>定点</strong>来表示，定点记法可随意选择整数部分和小数部分各用多少位去表示。定点记法的缺点在于，它同时限制了可表示整数部分的范围及小数部分的精度。<br>
+于是出现了<strong>浮点</strong>记法，在浮点记法中，小数点可以任意移动至不同位置，此位置是由指数控制的。一个浮点数由3部分组成的：</p>
+<ul>
+<li><strong>尾数</strong>： 含有包括小数点前后的相关数字</li>
+<li><strong>指数</strong>： 决定数字的小数点位置</li>
+<li><strong>符号位</strong>： 表示该数字的正负</li>
+</ul>
+<p>浮点数最流行的标准是IEEE-754标准：<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/7e2a81d112ea49d3b75a63d15250c5d7.png" alt="在这里插入图片描述" width="550" loading="lazy"><br>
+若使用符号位s、尾数m、指数e去表达一个值v，则：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>v</mi><mo>=</mo><mi>s</mi><mo>∗</mo><msup><mn>2</mn><mrow><mo>(</mo><mi>e</mi><mo>−</mo><mn>127</mn><mo>)</mo></mrow></msup><mo>∗</mo><mo>(</mo><mn>1</mn><mo>+</mo><mi>m</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">v = s * 2^{(e-127)} * (1 + m)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.46528em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.938em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathdefault mtight">e</span><span class="mbin mtight">−</span><span class="mord mtight">1</span><span class="mord mtight">2</span><span class="mord mtight">7</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mclose">)</span></span></span></span></span></p>
+<p>对于某浮点数表示方式，满足方程 1 + ε ≠ 1的最小浮点数 ε 称为机器的<strong>epsilon</strong>。例如，IEEE-754标准中32位浮点数的精度为23位，ε = <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mrow><mo>−</mo><mn>23</mn></mrow></msup></mrow><annotation encoding="application/x-tex">2^{-23}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">2</span><span class="mord mtight">3</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<h3 id="font-color-0066aa字节序font"><font color = #0066aa>字节序</font></h3>
+<p>在内存中储存多字节整数有两种方式，不同的微处理器的选择有所不同：</p>
+<ul>
+<li><strong>小端</strong>： 若处理器储存多字节至的最低有效字节放于较低的内存位置，则该处理器就是小端处理器</li>
+<li><strong>大端</strong>： 若处理器储存多字节值的最高有效字节位于较低的内存位置，则该处理器就是大端处理器<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/e81c293ece6d4155a40870c0000e16a3.png" alt="在这里插入图片描述" width="300" loading="lazy"></li>
+</ul>
+<h3 id="font-color-0066aa内联函数font"><font color = #0066aa>内联函数</font></h3>
+<p>函数声明前加<strong>inline</strong>可以声明为内联函数，每个调用内联函数的地方都会复制该函数的机器码，并把机器码直接嵌入调用方的函数里。</p>
+<p><code>inline</code> 只是给编译器的提示。编译器会为每个内联函数分析其内联的成本效益，对比内联该函数的潜在效率收益，决定是否对函数进行内联。</p>
+<h2 id="font-color-0076ba内存font"><font color = #0076ba>内存</font></h2>
+<h3 id="font-color-0066aa可执行映像font"><font color = #0066aa>可执行映像</font></h3>
+<p>可执行映像分为几个相连的块，这些块称为<strong>段</strong>或<strong>节</strong>。映像文件一般最少由四个段组成：</p>
+<ol>
+<li><strong>代码段</strong>： 包含程序中定义的全部函数的可执行机器码</li>
+<li><strong>数据段</strong>： 包含全部<strong>已经初始化</strong>的全局及静态变量。链接器为这些变量分配所需内存，其内存布局与程序执行时完全一样。</li>
+<li><strong>BSS段</strong>：包含程序中定义的所有<strong>未初始化</strong>的全局变量和静态变量。C/C++中任何未初始化的全局变量和静态变量皆为零。</li>
+<li><strong>只读数据段</strong>： 包含程序中定义的只读（常量）全局变量。比如所有用const关键字声明的全局对象实例就属于此段。</li>
+</ol>
+<h3 id="font-color-0066aa程序堆栈font"><font color = #0066aa>程序堆栈</font></h3>
+<p>当可执行程序被载入内存是，操作系统会保留一块称为<strong>程序堆栈</strong>的内存。当调用函数时，一块连续的内存就会压入栈，此内存块称为<strong>堆栈帧</strong>(Stack frame)。</p>
+<p>例如函数a()调用函数b(),函数b()的新堆栈帧就会被压入a()栈帧之上。当b()返回时，其栈帧就会弹出，并在调用b()之后的位置继续执行a()。</p>
+<p>栈帧储存3类数据：</p>
+<ol>
+<li>调用函数的<strong>返回地址</strong>。当函数返回时，凭借返回地址继续执行调用方的函数</li>
+<li>相关<strong>CPU寄存器</strong>的内容。通过保存寄存器内容，被调用方可以使用合适的寄存器，而不必担心调用方所需的数据被覆盖。当函数返回时，各寄存器会还原至调用方可继续执行的状态。</li>
+<li>函数里所有的<strong>局部变量</strong>。</li>
+</ol>
+<p>栈帧示例：<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/33b30f0aa1f2441fb1d531c557e77151.png" alt="在这里插入图片描述" width="500" loading="lazy"></p>
+<h3 id="font-color-0066aa内存对齐font"><font color = #0066aa>内存对齐</font></h3>
+<p>struct内存布局：<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/de61683b4c474251b9a3b8b5a597ce04.png" alt="在这里插入图片描述" width="600" loading="lazy"><br>
+可见，编译器默认会在内存布局中留下空隙。<br>
+许多计算机系统对基本数据类型的合法地址做出了一些限制，要求某种类型对象的地址必须的某个值K（通常时2、4、8）的倍数。这种<em>对齐限制</em>简化了处理器和内存系统之间接口的硬件设计。<br>
+对齐原则时任何K字节的基本对象的地址必须时K的倍数。</p>
+<h3 id="font-color-0066aac中类的布局font"><font color = #0066aa>C++中类的布局</font></h3>
+<p>当B类继承A类，内存里B类的数据成员会紧接A类数据成员之后。<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/f3d764150d354909951a47b2aebab644.png" alt="在这里插入图片描述" width="200" loading="lazy"></p>
+<p>当类含有或继承了一个或多个<strong>虚函数</strong>，类的内存布局最前端会添加一个4字节（或目标硬件中指针占的字节数目）的<strong>虚表指针</strong>，指向名为<strong>虚函数表</strong>的数据结构。在每个类的虚函数表里，包含该类声明或继承而来的所有虚函数指针。每个（含虚函数的）具体类都具有一个虚函数表，并且这些类的实例都会有虚表指针指向该虚函数表。<br>
+虚函数表是多态的核心。</p>
+<p>调用虚函数内存布局实例(SetId为虚函数，Draw为纯虚函数)：<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/b6833a33493948ef9e1685c6f769ab4c.png" alt="在这里插入图片描述" width="600" loading="lazy"></p>
+<h1 id="font-color-0077bb数学基础font"><font color = #0077bb>数学基础</font></h1>
+<h2 id="font-color-0076ba渲染管线font"><font color = #0076ba>渲染管线</font></h2>
+<p>参考顶点渲染过程  <a href="https://sqrt9.com/post/unity-shader-1/">《一个顶点是怎么显示在屏幕上的》</a></p>
+<h2 id="font-color-0076ba四元数font"><font color = #0076ba>四元数</font></h2>
+<ul>
+<li><strong>单位长度</strong>的四元数（即所有符合<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>q</mi><mi>x</mi><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>q</mi><mi>y</mi><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>q</mi><mi>z</mi><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>q</mi><mi>w</mi><mn>2</mn></msubsup><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">q_{x}^{2} + q_{y}^{2} + q_{z}^{2} + q_{w}^{2} = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.061108em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-2.4530000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.197216em;vertical-align:-0.383108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-2.4530000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.383108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.061108em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-2.4530000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.04398em;">z</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.061108em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-2.4530000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>的四元数）能代表三维旋转。</li>
+<li>四元数乘法：给定两个四元数p和q，分别代表旋转<strong>P</strong>和<strong>Q</strong>，则pq代表两旋转的合成旋转（即旋转Q之后再旋转P）。可见四元数的相乘次序和进行旋转的次序是相反的。</li>
+</ul>
+<h2 id="font-color-0076ba欧拉角font"><font color = #0076ba>欧拉角</font></h2>
+<ul>
+<li><strong>欧拉角</strong>能表示旋转，由三个标量值组成：偏航角、俯仰角、滚动角</li>
+<li>欧拉角会遭遇<strong>万向节死锁</strong>的情况，当旋转90度时，三主轴中的一个会与另一个主轴完全对齐，从而失去一个方向的旋转。</li>
+</ul>
+<h2 id="font-color-0076basimdfont"><font color = #0076ba>SIMD</font></h2>
+<p><strong>单指令多数据</strong>（SIMD）是指，现代处理器能用一个指令并行地对多个数据执行数学运算。SIMD广泛的应用在游戏引擎的数学库中，因为它能非常迅速的执行常见的矢量运算，比如点积和矩阵乘法。</p>
+<h2 id="font-color-0076ba随机数font"><font color = #0076ba>随机数</font></h2>
+<p>随机数产尘器所产生的序列仅仅是非常复杂而已，这些序列其实是完全确定的。随机数产生器的好坏，在于其产生多少个数字之后会重复（即序列的周期）。</p>
+<p>常见的随机数产生器：</p>
+<ul>
+<li>线性同余产生器</li>
+<li>梅森旋转算法</li>
+</ul>
+<h1 id="font-color-0077bb游戏支持系统font"><font color = #0077bb>游戏支持系统</font></h1>
+<h2 id="font-color-0076ba内存管理font"><font color = #0076ba>内存管理</font></h2>
+<ul>
+<li>以malloc()或C++的全局new运算符进行<strong>动态内存分配</strong>， 是非常慢的操作</li>
+<li>把数据置于细小连续的内存块，相比把数据分散至广阔的内存地址，CPU对前者的操作会高效的多。</li>
+</ul>
+<p>动态内存分配（堆分配）低效的原因:</p>
+<ul>
+<li>堆分配器是通用的设施，必须处理任何大小的分配请求。这需要很大的管理开销</li>
+<li>在大多操作系统上，malloc( )/free( )必然会从用户模式切换至内核模式，处理请求，再切换至原来的程序。这些上下文切换会耗费很多时间。</li>
+</ul>
+<h3 id="font-color-0066aa内存分配器font"><font color = #0066aa>内存分配器</font></h3>
+<ul>
+<li><strong>堆栈分配器</strong>：
+<ol>
+<li>预分配一大块连续内存</li>
+<li>安排一个指针指向堆栈的顶端，指针以下的内存是已分配的，指针以上是未分配的</li>
+<li>对于分配请求，仅需把指针往上移动请求所需的字节数量</li>
+<li>对于释放请求，只需把指针向下移动</li>
+</ol>
+</li>
+<li><strong>池分配器</strong>：
+<ol>
+<li>预分配一大块内存</li>
+<li>池内每个元素（请求分配内存的对象）会加到一个存放自由元素的链表</li>
+<li>分配器收到分配请求时，就会把自由链表的下一个元素取出，并传回该元素</li>
+<li>释放元素时，只需简单的把元素插回自由链表中</li>
+</ol>
+</li>
+</ul>
+<h3 id="font-color-0066aa内存碎片font"><font color = #0066aa>内存碎片</font></h3>
+<p>随着时间的推移，鉴于以随机次序分配及释放不同尺寸的内存块，堆内存开始变成开始变成由自由块和使用中块所拼接而成的拼布模样<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/84d28f1fdf6a450bbddf244214ac9ba3.png" alt="在这里插入图片描述" width="550" loading="lazy"><br>
+在支持<strong>虚拟内存</strong>的操作系统上，内存碎片并非大问题。虚拟内存系统会把不连续的内存块（<strong>内存页</strong>）映射至虚拟地址空间，使内存页对于应用程序来说，看上去是连续的。在物理内存不足时，久没使用的内存页便会写进磁盘，有需要时再重载到物理内存。</p>
+<h3 id="font-color-0066aa缓存font"><font color = #0066aa>缓存</font></h3>
+<p>读写之系统内存是很缓慢的操作，通常需要几千个时钟周期才能完成。存取寄存器只需数十个周期，现代处理器会采用高速的内存缓存（Cache）。</p>
+<p>缓存的运作方式：当首次读取某区域的主内存，该内存小块会载入高速缓存。内存块的单位称为<strong>缓存线</strong>（8-512字节大小）。之后再读取内存，该数据已经在缓存中，可以直接从缓存载入寄存器。当请求的数据不在缓存中，则必须存取主内存，即<strong>缓存命中失败</strong>。这种情况需要等待缓存线更新新的内存块之后才能继续运行。</p>
+<p>数据和代码都会置于缓存内。指令内存会预载即将执行的机器码，而数据缓存则用来加速自主内存读/写数据</p>
+<p><strong>C/C++链接器规则：</strong></p>
+<ul>
+<li>单个函数的机器码总是置于连续的内存（内联函数除外）</li>
+<li>编译器和链接器按函数在源代码中出现的次序排列内存布局</li>
+</ul>
+<p><strong>避免缓存命中失败：</strong></p>
+<ul>
+<li>数据编排进连续的内存块中，尺寸越小越好，并且顺序访问这些数据</li>
+<li>高效能代码体积越小越好</li>
+<li>在性能关键的代码段落中，避免调用函数</li>
+</ul>
+<p>关于写出缓存友好代码的一些参考文章：<br>
+<a href="https://stackoverflow.com/questions/16699247/what-is-a-cache-friendly-code">what is a cache friendly code?</a></p>
+<h3 id="font-color-0066aa字典和散列表font"><font color = #0066aa>字典和散列表</font></h3>
+<p>字典是由键值对组成的表。此类数据结构通常是使用二叉查找树或散列表来实现的</p>
+<p>散列表碰撞解决方法：</p>
+<ul>
+<li>开放式散列<br>
+碰撞发生时，多个键值对会储存在同一个位置上，这些键值对通常以链表的形式储存<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/13f474bef8254c2ea967a34ba0955c20.png" alt="在这里插入图片描述" width="350" loading="lazy"></li>
+<li>闭合式散列<br>
+在闭合式散列表中，解决碰撞的方法是进行探查过程。探查由<strong>线性探查</strong>和<strong>二次探查</strong>等<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/39f11410a236497887b43bea82caed29.png" alt="在这里插入图片描述" width="350" loading="lazy"></li>
+</ul>
+<h3 id="font-color-0066aa字符串散列标识符font"><font color = #0066aa>字符串散列标识符</font></h3>
+<p>把字符串散列是一个很好的方案。散列函数能把字符串映射至半唯一整数。字符串散列码能如整数般比较，因此其比较操作很迅速。若把实际的字符串存于散列表，那么就可以凭散列码取回原来的字符串。常见的字符串散列函数有<a href="https://titanwolf.org/Network/Articles/Article?AID=094c9149-ec1b-460c-8061-c97c6413f494">time33算法</a>等</p>
+<h3 id="font-color-0066aa编码font"><font color = #0066aa>编码</font></h3>
+<p>阅读 <a href="https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/"><strong>每个开发者必须了解的Unicode和字符集知识</strong></a></p>
+<h1 id="font-color-0077bb文件系统font"><font color = #0077bb>文件系统</font></h1>
+<p>每次调用输入/输出（I/O），都需要称为<strong>缓冲区</strong>的数据区块，以供程序和磁盘之间传送来源或目标字节。当API负责管理所需的输入/输出数据缓冲，就称之为有缓冲功能的I/O API。若由程序员负责管理数据缓冲，则称为无缓冲功能的API。有IO缓冲功能的函数也被称为<strong>流输入/输出</strong>，因为这些API把磁盘文件抽象成字节流。</p>
+<p>异步文件I/O是利用另一线程来处理I/O请求的。I/O请求的工作完成后，就会调用主线程之前提供的回调函数，告之该操作已完成。若主线程等待完成I/O操作，就会使用信号量处理。</p>
+<p>游戏中的所有资源都必须有某种<strong>全局唯一标识符</strong>（GUID）。最常见的GUID选项就是资源的文件系统路径（储存为字符串或其32位散列码）。</p>
+<p>游戏资源通常用<a href="https://en.wikipedia.org/wiki/Reference_counting"><strong>引用计数</strong></a>来管理。当载入新关卡时，遍历该关卡所需的资源，并把这些资源的引用计数加1。当退出关卡时，遍历关卡里的所有资源，资源引用计数减1。引用计数为0时可卸载该资源。</p>
+<h3 id="font-color-0066aa资源内存管理font"><font color = #0066aa>资源内存管理</font></h3>
+<ul>
+<li><strong>基于堆的资源分配</strong><br>
+即忽略内存碎片问题，仅使用通用的对分配器分配资源所需的内存（如使用C的malloc( ) 或C++的全局new运算符）。</li>
+<li><strong>基于堆栈的资源分配</strong><br>
+堆栈分配器不会有内存碎片问题，因为内存是连续分配的额，而释放内存则是以分配的反方向进行。堆栈分配器适用于：
+<ol>
+<li>游戏是线性及以关卡为中心的</li>
+<li>内存足够容纳各个完整关卡<br>
+详细流程：游戏启动时，先分配非载入并驻留资源（LSR）。标记栈的顶端位置，之后便可以释放资源至此位置。载入关卡时，只需要简单的在栈的顶端分配资源所需的内存。玩家完成关卡后，就可以把栈的顶端位置移到之前标记的位置，即可释放关卡的所有资源。<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/d778c1368bd446c9821d48fd20a83072.png" alt="在这里插入图片描述" width="400" loading="lazy"></li>
+</ol>
+</li>
+<li><strong>基于池的资源分配</strong><br>
+把资源数据以同等大小的组块载入。因为全部组块的大小相同，所以可用池来管理。之后资源卸下时也不会造成内存碎片问题。<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/cfca2a866d8f49cc90fcef6b77c63cc5.png" alt="在这里插入图片描述" width="400" loading="lazy"><br>
+“组块式”资源分配天生具有一个取舍问题，这就是空间浪费。除非资源文件大小刚好是组块大小的倍数。</li>
+</ul>
+<h3 id="font-color-0066aa资源引用font"><font color = #0066aa>资源引用</font></h3>
+<p>通常交叉引用意味着依赖性（若资源A引用资源B，则A和B必须同时在内存里才能使游戏正常运作）。总的来说，游戏资源数据库可表达为，由互相依赖的数据对象所组成的<strong>有向图</strong>。<br>
+在C++中，两数据对象间的交叉引用，通常以<strong>指针</strong>或<strong>引用</strong>实现。但是指针知识内存地址，其值在离开运行中的程序时就会失去意义。</p>
+<p>资源间的内部交叉引用通常是通过把交叉引用关系储存为字符串或散列码，内含被引用对象的唯一标识符（比如GUID）。</p>
+<p>但要正确表示<strong>外部</strong>交叉引用，除了要指明GUID，还需要加上资源对象所属文件的路径。</p>
+<p>当载入由多个文件组成的资源时，关键在于要先载入所有互相依赖的文件。可行的做法是，载入每个资源文件是，扫描文件中的交叉引用表，并载入所有外部引用但未载入的资源文件。</p>
+<h1 id="font-color-0077bb游戏循环及实时模拟font"><font color = #0077bb>游戏循环及实时模拟</font></h1>
+<h2 id="font-color-0076ba游戏循环font"><font color = #0076ba>游戏循环</font></h2>
+<p>游戏由许多互动的子系统所构成，包括输入/输出设备、渲染、动画、碰撞检测及决议、可选的刚体动力学模拟、多玩家网络、音频等。在游戏运行时，多数游戏引擎子系统都需要周期性的<strong>提供服务</strong>。</p>
+<h3 id="font-color-0066aa基于事件的更新font"><font color = #0066aa>基于事件的更新</font></h3>
+<p>在游戏中，<strong>事件</strong>是指游戏状态或游戏环境状态的有趣改变。多数的游戏引擎都有一个事件系统，让各个引擎子系统登记其关注的某类型事件。</p>
+<h3 id="font-color-0066aa帧率及时间font"><font color = #0066aa>帧率及时间</font></h3>
+<p>两帧之间经过的时间称为<strong>帧时间</strong>、时间增量或增量时间。数学上常写为Δt。若要度量Δt，只需读取CPU的高分辨率计时器取值两次----一次于帧开始之时，一次于帧结束之时，去两者之差，就能精确测量<strong>上一帧</strong>的Δt。但是这种方法有个问题就是：我们是用的第k帧测量的Δt去估计第k+1帧的帧时间。</p>
+<p>解决这个问题的方法：</p>
+<ul>
+<li>计算连续几帧的平均时间，用来估计下一帧的Δt。</li>
+<li>调控帧率。即尝试保证每帧都准确耗时33.3ms（60FPS）。如果当帧耗时比目标时间短，那么可以让主线程休眠，如果耗时比目标时间长，则只好白等下一个目标时间。</li>
+</ul>
+<h2 id="font-color-0076ba网络多人游戏font"><font color = #0076ba>网络多人游戏</font></h2>
+<ul>
+<li>C/S模型<br>
+在C/S模型中，大部分游戏逻辑运行在单个服务器上。因此服务器的代码和非网络的单人游戏很相似。客户端基本上只是一个“非智能”渲染引擎。客户端和服务器的代码通常会以不同频率进行更新。例如，在《雷神之锤》中，服务器以20FPS运行，而客户端以60FPS运行。</li>
+<li>P2P模型<br>
+在点对点多人架构中，线上世界中的每部机器都有点像服务器，也有点像客户端。游戏中的每个动态对象，都由其对应的单一机器所管辖。</li>
+</ul>
+<h1 id="font-color-0077bb人体学接口设备hidfont"><font color = #0077bb>人体学接口设备（HID）</font></h1>
+<h2 id="font-color-0076ba设备的接口技术font"><font color = #0076ba>设备的接口技术</font></h2>
+<ul>
+<li>
+<p>轮询<br>
+一些简单的设备，如手柄和老式摇杆，可通过定期<strong>轮询</strong>硬件来读取输入（通常在主游戏循环里每次迭代轮询一次）。那就意味着明确地查询设备的状态，方法其一是直接读取硬件寄存器，其二是读取经内存映射的I/O端口。微软的XInput API使用的就是简单轮询。</p>
+</li>
+<li>
+<p>中断<br>
+有些HID只会当其状态有某些改变时，才会把数据传至游戏引擎。这类设备通常和主机以<strong>硬件中断</strong>的方式进行通信。所谓中断，是由硬件生成的信号，能让CPU暂停主程序，并执行一小端称为<strong>中断服务程序</strong>（ISR）的代码。</p>
+</li>
+<li>
+<p>无线设备<br>
+蓝牙设备并不能简单的通过访问寄存器或内存映射I/O去读写。软件必须以蓝牙协议和设备“交流”。</p>
+</li>
+</ul>
+<h2 id="font-color-0076ba游戏引擎的hid系统font"><font color = #0076ba>游戏引擎的HID系统</font></h2>
+<ul>
+<li>
+<p>死区<br>
+由于HID本质上是模拟式设备，产生的电压会含有噪声，以致实际上度量到的输入会轻微在<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>I</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">I_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>附近浮动。对于这个问题，常见的解决办法是引入一个围绕 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>I</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">I_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 的小<strong>死区</strong>。对于摇杆，死区可以定义为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><msub><mi>I</mi><mn>0</mn></msub><mo>−</mo><mi>σ</mi><mo separator="true">,</mo><msub><mi>I</mi><mn>0</mn></msub><mo>+</mo><mi>σ</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[I_0 - σ, I_0 + σ]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">σ</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">σ</span><span class="mclose">]</span></span></span></span>。任何位于死区的输入值都可以被钳制为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>I</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">I_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07847em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</p>
+</li>
+<li>
+<p>模拟信号过滤<br>
+控制器输入经常会有信号噪声问题，许多游戏会过滤来自HID的原始信号。噪声信号的频率通常比玩家产生的要高。解决方法是，先利用<strong>低通滤波器</strong>过滤原始数据，再把结果传送至游戏中使用。<br>
+离散低通滤波器的实现方法之一是，结合目前未过滤输入值和上一帧的已过滤输入。设未过滤的输入为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">u(t)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">u</span><span class="mopen">(</span><span class="mord mathdefault">t</span><span class="mclose">)</span></span></span></span>， 并设已过滤输入为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">f(t)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">t</span><span class="mclose">)</span></span></span></span> ，当中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">t</span></span></span></span> 为时间，则公式为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mo>(</mo><mn>1</mn><mo>−</mo><mi>a</mi><mo>)</mo><mi>f</mi><mo>(</mo><mi>t</mi><mo>−</mo><mi mathvariant="normal">Δ</mi><mi>t</mi><mo>)</mo><mo>+</mo><mi>a</mi><mi>u</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">f(t) = (1 - a)f(t - Δt) + au(t) 
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">a</span><span class="mclose">)</span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">Δ</span><span class="mord mathdefault">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">u</span><span class="mopen">(</span><span class="mord mathdefault">t</span><span class="mclose">)</span></span></span></span></span></p>
+<p>当中参数 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">a</span></span></span></span> 是按持续时间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">Δt</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord">Δ</span><span class="mord mathdefault">t</span></span></span></span> 和过滤常数 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">RC</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span></span></span></span> 所确定：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mo>=</mo><mi mathvariant="normal">Δ</mi><mi>t</mi><mi mathvariant="normal">/</mi><mo>(</mo><mi>R</mi><mi>C</mi><mo>+</mo><mi mathvariant="normal">Δ</mi><mi>t</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">a = Δt / (RC +Δt ) 
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">a</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">Δ</span><span class="mord mathdefault">t</span><span class="mord">/</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">Δ</span><span class="mord mathdefault">t</span><span class="mclose">)</span></span></span></span></span></p>
+</li>
+<li>
+<p>弦<br>
+<strong>弦</strong>（chord）是指一组按钮，当同时被按下时，会产生在游戏中另一个独特行为。比如组合技。弦的检测在理论上颇简单----监察两个或两个以上的按钮状态，当该组合按钮全部同时被按下时，才执行操作。</p>
+</li>
+<li>
+<p>迅速连打按钮<br>
+许多游戏要求玩家迅速连打按钮以执行某些动作。连打按钮的频率有时候会转化为游戏内的某些数值，例如玩家角色的跑步速度或其他动作。频率就是两次按下按钮的时间间隔的倒数。</p>
+</li>
+<li>
+<p>多按钮序列<br>
+假设我们想检测在1s内连续按下ABA序列，其做法如下：首先需要使用一变量记录在序列中预期要按下的按钮，例如 <code>aButtons[3] = {A, B, A}</code>， 那么该变量就是此数组的索引 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>。<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>的初始值设为0，变量<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>T</mi><mrow><mi>s</mi><mi>t</mi><mi>a</mi><mi>r</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{start}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>记录整个序列的开始时间。然后当接收到一个目前预期的按钮按下事件，便把预期而按钮设为下一个按钮（即 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">i + 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.74285em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">i</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> ）。如果按下的时间间隔过长或不符合预期，则重置按钮索引和<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>T</mi><mrow><mi>s</mi><mi>t</mi><mi>a</mi><mi>r</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">T_{start}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</p>
+</li>
+</ul>
+<h1 id="font-color-0077bb渲染引擎font"><font color = #0077bb>渲染引擎</font></h1>
+<h2 id="font-color-0077bb三维渲染的基本步骤font"><font color = #0077bb>三维渲染的基本步骤</font></h2>
+<ul>
+<li>描述一个虚拟场景。一般是以某种数学形式表示的三维表面（比如模型）。</li>
+<li>定位及定向一个虚拟摄像机，为场景取景。</li>
+<li>设置光源。</li>
+<li>描述场景中的物体表面的视觉特性。通常由材质决定。</li>
+<li>对于位于影像矩阵内的像素，渲染引擎会找出经过该像素而聚焦于虚拟摄像机焦点的光线，并计算其颜色及强度。这个过程称之为<strong>着色方程。</strong><br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/db7d3caed93d4cf4b87a67074bfac7ab.png" alt="在这里插入图片描述" loading="lazy"></li>
+</ul>
+<h2 id="font-color-0077bb三角形网格font"><font color = #0077bb>三角形网格</font></h2>
+<p>在各种多边形中，实时渲染之所以选用三角形，是因为三角形有以下优点：</p>
+<ul>
+<li>三角形是最简单的多边形。</li>
+<li>三角形必然是平坦的。</li>
+<li>三角形经过多种转换之后仍然维持是三角形，这对于仿射变换和透视转换也成立。</li>
+<li>几乎所有商用图形加速硬件都是为三角形光栅化而设计的。</li>
+</ul>
+<h2 id="font-color-0077bb索引化三角形表font"><font color = #0077bb>索引化三角形表</font></h2>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/b729f2577c3a461bb934887df20f1a16.png" alt="在这里插入图片描述" loading="lazy"></figure>
+<p>图10.6的三角形表中有很多重复使用的顶点，但是因为每个顶点要储存很多元数据，因此在三角形表中重复的数据会很浪费内存。同时也会浪费GPU资源。于是很多渲染引擎会采用更有效的数据结构----索引化三角形表。基本思想就是每个顶点仅列举一次，然后用轻量级的顶点<strong>索引</strong>来定义组成三角形的三个顶点。</p>
+<p>在游戏渲染中，有时候还会用到名为<strong>三角形带</strong>和<strong>三角形扇</strong>的网格数据结构。这两种数据结构也能降低某程度的顶点重复，因为它们是通过预先定义出现的次序，并预先定义顶点组合成三角形的规则。</p>
+<h2 id="font-color-0077bb顶点属性font"><font color = #0077bb>顶点属性</font></h2>
+<ul>
+<li>位置矢量。通常表示模型空间中的空间位置</li>
+<li>顶点法矢量。常用于逐顶点动态光照的计算</li>
+<li>顶点切线矢量。</li>
+<li>漫反射颜色。用于描述表面的漫反射颜色</li>
+<li>镜面颜色。表示镜面高光的颜色</li>
+<li>纹理坐标。用来把二维的位图“收缩包裹”网格的表面，此过程称为纹理贴图。纹理坐标也成为uv坐标</li>
+<li>蒙皮权重。在骨骼动画里，网格的顶点依附在骨骼的个别关节之上，一个顶点可能受多个关节的影响，最终的顶点位置变为这些影响的<strong>加权平均</strong>。</li>
+</ul>
+<h2 id="font-color-0077bb纹理寻址模式font"><font color = #0077bb>纹理寻址模式</font></h2>
+<ul>
+<li><strong>缠绕模式</strong>（wrap mode）：纹理在各方向无限重复。纹理坐标<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>j</mi><mi>u</mi><mo separator="true">,</mo><mi>k</mi><mi>v</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">(ju, kv)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mord mathdefault">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span>等价于<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">(u, v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span>，j和k为整数</li>
+<li><strong>镜像模式</strong>（mirror mode）</li>
+<li><strong>截取模式</strong>（clamp mode）：当纹理坐标在正常范围之外时，纹理的边缘纹素会简单的延伸。</li>
+<li><strong>边缘颜色模式</strong>：在纹理坐标[0, 1]之外使用用户指定的颜色<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/cc60081e6ecb47f2acd5dec3e73582e9.png" alt="在这里插入图片描述" width="400" loading="lazy"></li>
+</ul>
+<h2 id="font-color-0077bb纹理过滤方式font"><font color = #0077bb>纹理过滤方式</font></h2>
+<ul>
+<li><strong>最近邻</strong>：选择最接近像素中心的纹素</li>
+<li><strong>双线性</strong>：对围绕像素中心的四个纹素采样，并计算该4个颜色的加权平均（权重是基于纹素和像素中心的距离）。</li>
+<li><strong>三线性</strong>：把双线性过滤法施于最接近的两个渐远纹理级数，然后把两个采样结果线性插值</li>
+<li><strong>各向异性</strong>：适用于表面倾斜于虚拟屏幕平面的情况。各向异性过滤会根据视角，对一个梯形范围内的纹理采样。</li>
+</ul>
+<h2 id="font-color-0077bb光照模型font"><font color = #0077bb>光照模型</font></h2>
+<p><a href="https://sqrt9.com/post/shader-light-model-2/">《Shader中常用的光照模型》</a></p>
+<h2 id="font-color-0077bb帧缓冲font"><font color = #0077bb>帧缓冲</font></h2>
+<p>渲染后的图像会储存在一个名为<strong>帧缓冲</strong>的颜色位图缓冲里。显示硬件会周期地读取帧缓冲地内容，渲染引擎通常会维护至少两个帧缓冲，当显示硬件扫描一个帧缓冲是，渲染引擎更新另一个缓冲。此称为<strong>双缓冲法</strong>。</p>
+<h2 id="font-color-0077bb渲染管线font"><font color = #0077bb>渲染管线</font></h2>
+<p><a href="https://sqrt9.com/post/unity-shader-2/">Unity Shader渲染管线</a></p>
+<h2 id="font-color-0077bb内存访问font"><font color = #0077bb>内存访问</font></h2>
+<p>着色器不能直接读/写显存，只能通过寄存器和纹理贴图来访问。</p>
+<p>寄存器种类：</p>
+<ul>
+<li>输入寄存器：着色器地主要数据来源。在顶点着色器中，输入寄存器含有顶点地属性数据。在片元着色器中，输入寄存器含有片元的顶点属性插值数据。在调用着色器之前，GPU会自动设置这些输入寄存器的值。</li>
+<li>常数寄存器：这里的值是由应用程序设置的。常用的有：模型观察矩阵、投影矩阵、光照参数等</li>
+<li>临时寄存器：只供着色器程序内部使用，通常用于储存中间计算结果</li>
+<li>输出寄存器：这些寄存器的内容由着色器填充，作为着色器仅有的输出形式。在顶点着色器中，输出寄存器含有顶点属性，例如变换后的位置、法向量、纹理坐标等。在片元着色器中，输出寄存器包含着色片元的最终颜色。</li>
+</ul>
+<p>在调用着色器程序之前，GPU会从显存自动复制顶点或片段属性数据至适当的输入寄存器；当程序执行完成，GPU会把输出寄存器的内存写入显存，使数据能给予下个管道阶段。</p>
+<p>着色器也能够直接读取<strong>纹理贴图</strong>。纹理数据是以纹理坐标寻址的。着色器只能用间接的方法<strong>写</strong>数据进纹理：把场景渲染至屏幕外帧缓冲，再在后续的渲染阶段把该帧缓冲当作纹理贴图使用。称为Render to texture；</p>
+<h2 id="font-color-0077bb高动态范围hdr光照font"><font color = #0077bb>高动态范围（HDR）光照</font></h2>
+<p>显示设备只能产生有限的强度范围。然而在真实世界，光的强度可以任意增大。使用HDR光照时，最终图像的格式会容许储存大于1的强度。在把图像显示到屏幕之前，会进行一个<strong>色调映射</strong>的处理，把图像的强度调整至显示设备所支持的范围。</p>
+<h2 id="font-color-0077bb阴影渲染font"><font color = #0077bb>阴影渲染</font></h2>
+<ul>
+<li>
+<p><strong>阴影体积</strong><br>
+阴影体积使用一种特殊的全屏缓冲产生阴影，此缓冲称为模板缓冲（stencil buffer），它对应屏幕每个像素储存一个整数值。使用阴影体积渲染阴影步骤：</p>
+<ol>
+<li>渲染一遍没有阴影的场景，把模板缓冲中每个像素的值都设为0</li>
+<li>从摄像机的视角渲染阴影体积，渲染时，若片元属于正向的三角形，模板缓冲值加1，背向的三角形模板缓冲值减1。阴影体积以外的像素，对应的模板缓冲值维持0。</li>
+<li>将模板值非0的区域颜色加深即阴影。</li>
+</ol>
+</li>
+<li>
+<p><strong>阴影贴图</strong></p>
+<ol>
+<li>首先从光源视角渲染场景，把渲染结果的深度缓冲（距离光源的深度）储存为<strong>阴影贴图</strong>纹理。</li>
+<li>以正常方式渲染场景，渲染每个片元时，如果该片元与光源的距离比阴影贴图里的对应深度值远，那该片元在阴影范围内。（判断过程时通过将片元转换到光源空间进行对比）<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/f4e4a771a53f4bea9562781c55399127.png" alt="在这里插入图片描述" width="600" loading="lazy"></li>
+</ol>
+</li>
+</ul>
+<h2 id="font-color-0077bb延迟渲染font"><font color = #0077bb>延迟渲染</font></h2>
+<p>在传统基于三角形光栅化的渲染中，所有光照和着色计算都是在观察空间中的三角形片段上计算的。这种做法常会造成性能问题。因为如果片元在深度测试阶段被剔除，GPU之前的工作都浪费了。尽管可以使用早期深度测试（Early-Z）大致避免这种情况。而且，当场景中多个光源时，会产生大量不同的片元着色器版本，每个版本处理不同数量的光源、不同种类的光源等。</p>
+<p>延迟渲染中，主要的光照计算实在屏幕空间中进行的，而非观察空间。</p>
+<ol>
+<li>首先渲染不含光照的场景，同时把所有用于光照计算的信息存储在几何缓冲（G-buffer）中。</li>
+<li>完成场景渲染后，使用几何缓冲中的信息来计算光照和着色。</li>
+</ol>
+<h1 id="font-color-0077bb动画系统font"><font color = #0077bb>动画系统</font></h1>
+<h2 id="font-color-0077bb骨骼font"><font color = #0077bb>骨骼</font></h2>
+<p>骨骼有刚性的关节层级结构所构成，在内存中骨骼通常由含有关节数组的结构表示。数组中首个关节总是骨骼的根关节。在动画数据结构中，通常会使用<strong>关节索引</strong>引用关节。</p>
+<p>关节数据结构：</p>
+<ul>
+<li>关节名字</li>
+<li>骨骼中父节点的索引</li>
+<li>关节的绑定姿势之逆变换。关节的绑定姿势是指蒙皮网格顶点绑定至骨骼时，关节的位置、旋转和缩放。</li>
+</ul>
+<h2 id="font-color-0077bb局部姿势font"><font color = #0077bb>局部姿势</font></h2>
+<p>关节姿势通常用<strong>局部姿势</strong>描述相对父的姿势。数学上，关节姿势就是一个<strong>仿射变换</strong>。<br>
+数学上，某关节的模型空间姿势（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>j</mi><mo>→</mo><mi>M</mi></mrow><annotation encoding="application/x-tex">j→M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.85396em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span></span></span></span>），可通过从该关节遍历至根关节时，在每个关节乘上其局部姿势（j→p(j)）算出。为计算关节的全局姿势，可从该关节往根关节及模型空间远点遍历，过程中把每个关节的子至父（局部）变换串接起来。</p>
+<p>在内存中表示全局姿势：</p>
+<pre><code class="language-C">struct SkeletonPose
+{
+    Skeleton* m_pSkeleton;          // 骨骼 + 关节数量
+    JointPose * m_aLocalPose;       // 多个局部关节姿势
+    Matrix44 * m_aGlobalPose;       // 多个全局关节姿势
+}
+</code></pre>
+<h2 id="font-color-0077bb动画数据格式font"><font color = #0077bb>动画数据格式</font></h2>
+<p>动画数据一般是通过离散地以每秒30或60个骨骼姿势采样地速率采样而得。一个采样由骨骼中地每个关节的完整姿势所组成。这些关节姿势通常储存为SQT格式：缩放部分S是一个三维矢量；旋转部分Q是一个四元数，平移部分T是三维矢量。<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/316d41a08f8b46c7986c01ea9b760f6f.png" alt="在这里插入图片描述" width="550" loading="lazy"></p>
+<p>典型顶点蒙皮数据结构：</p>
+<pre><code class="language-C">struct SkinnedVertex
+{
+    float m_position[3];            // 顶点位置
+    float m_normal[3];              // 顶点法线
+    float m_u, m_v;                   // 纹理坐标
+    U8    m_joingIndex[4];        // 关节索引
+    float m_joingWeight[3];     // 关节权重
+}
+</code></pre>
+<h2 id="font-color-0077bb蒙皮font"><font color = #0077bb>蒙皮</font></h2>
+<p><strong>蒙皮矩阵</strong>能把网格顶点从原来的位置（绑定姿势）变换至骨骼的当前姿势。即蒙皮网格的顶点会追随其绑定的关节而移动。</p>
+<p>蒙皮顶点的位置是在模型空间定义的。包括其骨骼的绑定姿势也是。所以我们所求的矩阵会把顶点从绑定姿势的模型空间变换至当前姿势的模型空间。</p>
+<p>蒙皮矩阵公式（具体推导过程可参考《游戏引擎架构》p473）：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>K</mi><mi>j</mi></msub><mo>=</mo><mo>(</mo><msubsup><mi>B</mi><mrow><mi>j</mi><mo>→</mo><mi>M</mi></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msubsup><mo>)</mo><msub><mi>C</mi><mrow><mi>j</mi><mo>→</mo><mi>M</mi></mrow></msub></mrow><annotation encoding="application/x-tex">K_j = (B_{j→M}^{-1})C_{j→M} 
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.283878em;vertical-align:-0.41977em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.864108em;"><span style="top:-2.4163380000000005em;margin-left:-0.05017em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">→</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.41977em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328331em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">→</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>B</mi><mrow><mi>j</mi><mo>→</mo><mi>M</mi></mrow></msub></mrow><annotation encoding="application/x-tex">B_{j→M}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328331em;"><span style="top:-2.5500000000000003em;margin-left:-0.05017em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">→</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span>表示关节<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>j</mi></mrow><annotation encoding="application/x-tex">j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.85396em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span></span></span></span>在模型空间的绑定姿势。此矩阵把点或矢量从关节<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>j</mi></mrow><annotation encoding="application/x-tex">j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.85396em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span></span></span></span>的空间变换至模型空间。<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>C</mi><mrow><mi>j</mi><mo>→</mo><mi>M</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{j→M}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328331em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">→</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span>表示关节的当前姿势。</p>
+<p>TODO[动画姿势]</p>
+<h2 id="font-color-0077bb动画数据压缩font"><font color = #0077bb>动画数据压缩</font></h2>
+<ul>
+<li>通道省略：省略无关的通道，比如缩放</li>
+<li>量化：把32位浮点数转换成n位整数，即缩减每个通道的尺寸</li>
+<li>采样频率及键省略：降低整体的采样率；省略一些线性的变化数据，运行时通过线性插值还原</li>
+<li>基于曲线的压缩：采用B样条拟合动画通道数据</li>
+<li>选择性载入动画片段</li>
+</ul>
+<h2 id="font-color-0077bb动画系统架构font"><font color = #0077bb>动画系统架构</font></h2>
+<ul>
+<li>
+<p>动画管线</p>
+<ol>
+<li>片段解压及姿势提取</li>
+<li>姿势混合</li>
+<li>全局姿势生成</li>
+<li>后期处理</li>
+<li>重新计算全局姿势</li>
+<li>矩阵调色板生成<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/d45995a23204426eaa8d83e780ba80b2.png" alt="在这里插入图片描述" width="550" loading="lazy"></li>
+</ol>
+</li>
+<li>
+<p>动作状态机</p>
+</li>
+<li>
+<p>动画控制器</p>
+</li>
+</ul>
+<h1 id="font-color-0077bb碰撞及刚体动力学font"><font color = #0077bb>碰撞及刚体动力学</font></h1>
+<h2 id="font-color-0077bb凸性font"><font color = #0077bb>凸性</font></h2>
+<p>在碰撞检测范畴里，最重要的概念之一是分辨<strong>凸</strong>（convex）和<strong>非凸</strong>（non-convex）的形状。凸形状的定义为由形状内发射的光纤不会穿越形状表面两次或以上。</p>
+<h2 id="font-color-0077bb运动物体之间的碰撞检测font"><font color = #0077bb>运动物体之间的碰撞检测</font></h2>
+<p>在游戏中，运动通常是以离散时间步来模拟的。因此简单方法就是在每个时间步中，将每个刚体的位置和定向当作是静止的，然后进行静态的相交测试。但是这种方法不适用于高速移动的小物体：<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/game_engine_note/9d6af56b23154a92a9399f8a69a518d6.png" alt="在这里插入图片描述" width="550" loading="lazy"></p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://ayosi1996.github.io/tag/WXwYidGC_/" class="tag">
+                    Note
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://ayosi1996.github.io/post/c-yield-return-xiang-jie/">
+                  <h3 class="post-title">
+                    C# yield return详解
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+
+  </body>
+</html>

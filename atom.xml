@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://ayosi1996.github.io</id>
+    <title>Sqrt9</title>
+    <updated>2023-03-19T13:03:38.178Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://ayosi1996.github.io"/>
+    <link rel="self" href="https://ayosi1996.github.io/atom.xml"/>
+    <subtitle>Hi there!</subtitle>
+    <logo>https://ayosi1996.github.io/images/avatar.png</logo>
+    <icon>https://ayosi1996.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2023, Sqrt9</rights>
+    <entry>
+        <title type="html"><![CDATA[Lua源码解读笔记]]></title>
+        <id>https://ayosi1996.github.io/post/lua-yuan-ma-jie-du/</id>
+        <link href="https://ayosi1996.github.io/post/lua-yuan-ma-jie-du/">
+        </link>
+        <updated>2021-06-21T01:10:14.000Z</updated>
+        <summary type="html"><![CDATA[<p>记录Lua源码解读过程中关键的知识点</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>记录Lua源码解读过程中关键的知识点</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Mipmap详解]]></title>
+        <id>https://ayosi1996.github.io/post/xiang-jie-mipmap/</id>
+        <link href="https://ayosi1996.github.io/post/xiang-jie-mipmap/">
+        </link>
+        <updated>2021-03-31T03:43:15.000Z</updated>
+        <summary type="html"><![CDATA[<p>多级渐远纹理是什么？为什么使用多级渐远纹理？多级渐远纹理是怎么工作的？</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>多级渐远纹理是什么？为什么使用多级渐远纹理？多级渐远纹理是怎么工作的？</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Lua源码调试]]></title>
+        <id>https://ayosi1996.github.io/post/vs-2019-tiao-shi-lua-yuan-ma/</id>
+        <link href="https://ayosi1996.github.io/post/vs-2019-tiao-shi-lua-yuan-ma/">
+        </link>
+        <updated>2021-02-28T01:58:30.000Z</updated>
+        <summary type="html"><![CDATA[<p>调试Lua源码的方法</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>调试Lua源码的方法</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[每个软件开发人员必须了解的 Unicode 和字符集基础知识（译）]]></title>
+        <id>https://ayosi1996.github.io/post/Must-Know-About-Unicode-and-Character-Sets/</id>
+        <link href="https://ayosi1996.github.io/post/Must-Know-About-Unicode-and-Character-Sets/">
+        </link>
+        <updated>2020-12-30T07:24:05.000Z</updated>
+        <summary type="html"><![CDATA[<p>有没有想过那个神秘的 Content-Type 标签？ 就是你知道应该放入 HTML里，但又不是很确定应该写什么的那个标签。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>有没有想过那个神秘的 Content-Type 标签？ 就是你知道应该放入 HTML里，但又不是很确定应该写什么的那个标签。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unity 使用BSP程序化生成地图]]></title>
+        <id>https://ayosi1996.github.io/post/unity-shi-yong-bsp-cheng-xu-hua-sheng-cheng-di-tu/</id>
+        <link href="https://ayosi1996.github.io/post/unity-shi-yong-bsp-cheng-xu-hua-sheng-cheng-di-tu/">
+        </link>
+        <updated>2020-08-04T01:33:21.000Z</updated>
+        <summary type="html"><![CDATA[<p>二叉空间分割 (Binary space partitioning，简称BSP)是一种通过使用超平面作为分割，递归细分空间为两凸集的算法。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>二叉空间分割 (Binary space partitioning，简称BSP)是一种通过使用超平面作为分割，递归细分空间为两凸集的算法。</p>
+]]></content>
+    </entry>
+</feed>

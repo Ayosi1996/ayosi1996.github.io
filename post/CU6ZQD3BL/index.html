@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Blender Snap Inverse Kinematics and Forward Kinematics | Sqrt9</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://ayosi1996.github.io/favicon.ico?v=1679230816049">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ayosi1996.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="
+IK/FK Snap是一个很实用的功能，rigify插件自带此功能，但是对于已经设置好的自定义rig就没办法使用了，所以在网上找了一个相当简易的IK/FK Snap脚本：
+https://gist.github.com/dskjal/76..." />
+    <meta name="keywords" content="Blender" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://ayosi1996.github.io">
+        <img src="https://ayosi1996.github.io/images/avatar.png?v=1679230816049" class="site-logo">
+        <h1 class="site-title">Sqrt9</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://ayosi1996.github.io" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="https://ayosi1996.github.io/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://ayosi1996.github.io/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/Sqrt9SD" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Hi there!
+    </div>
+    <div class="site-footer">
+      Powered by Gridea | <a class="rss" href="https://ayosi1996.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Blender Snap Inverse Kinematics and Forward Kinematics</h2>
+            <div class="post-date">2019-06-15</div>
+            
+              <div class="feature-container" style="background-image: url('https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/blender_ikfk_snap/2020031700123124.jpg')">
+              </div>
+            
+            <div class="post-content" v-pre>
+              <!-- more -->
+<p>IK/FK Snap是一个很实用的功能，rigify插件自带此功能，但是对于已经设置好的自定义rig就没办法使用了，所以在网上找了一个相当简易的IK/FK Snap脚本：<br>
+https://gist.github.com/dskjal/76a778b4ad00e5fd8e20b6a1e104676c</p>
+<p>由于脚本中的骨骼名称已经全部定义好了，所以使用时还需要按照脚本修改骨骼名称。为了方便使用，我对脚本做了些修改。</p>
+<p>修改后的结果：<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/blender_ikfk_snap/1584293385503.png" alt="" loading="lazy"></p>
+<p>主要就是支持自己选择骨骼了。</p>
+<p>使用方法：<br>
+当选中一个骨架时，按照名称选择对应的骨骼，然后再进行IK-&gt;FK 或者 FK-&gt;IK</p>
+<p>一般胳膊骨骼控制需要用到3组骨骼：形变骨骼、IK控制、FK控制，所以该功能一般配合IK/FK Switch来使用。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://ayosi1996.github.io/tag/qoVlYcAAe/" class="tag">
+                    Blender
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://ayosi1996.github.io/post/SUwH35hRk/">
+                  <h3 class="post-title">
+                    Blender 2D图片转为3D模型并绑定骨骼
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+
+  </body>
+</html>

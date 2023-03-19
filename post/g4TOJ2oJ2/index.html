@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>解决Blender BGE 中character的滑动问题  | Sqrt9</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://ayosi1996.github.io/favicon.ico?v=1679230816049">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ayosi1996.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="在Blender 的游戏引擎中使用character物理时，发现控制character移动时，如果角色静止在一个特别小的斜坡上，都会发生滑动现象，尝试着增加了地面的摩擦力，问题依然存在
+
+
+原因是角色在静止不动时，受重力影响向下滑动。角色的..." />
+    <meta name="keywords" content="Blender" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://ayosi1996.github.io">
+        <img src="https://ayosi1996.github.io/images/avatar.png?v=1679230816049" class="site-logo">
+        <h1 class="site-title">Sqrt9</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://ayosi1996.github.io" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="https://ayosi1996.github.io/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://ayosi1996.github.io/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/Sqrt9SD" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Hi there!
+    </div>
+    <div class="site-footer">
+      Powered by Gridea | <a class="rss" href="https://ayosi1996.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">解决Blender BGE 中character的滑动问题 </h2>
+            <div class="post-date">2019-03-18</div>
+            
+              <div class="feature-container" style="background-image: url('https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/bge_slide/2020031700123124.jpg')">
+              </div>
+            
+            <div class="post-content" v-pre>
+              <p>在Blender 的游戏引擎中使用character物理时，发现控制character移动时，如果角色静止在一个特别小的斜坡上，都会发生滑动现象，尝试着增加了地面的摩擦力，问题依然存在</p>
+<!--more-->
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/bge_slide/1584293196723.gif" alt="" loading="lazy"></figure>
+<p>原因是角色在静止不动时，受重力影响向下滑动。角色的所有运动全是靠按键驱动，所以可以写一个脚本，判断当角色在地面上且没有按键时，将重力设置为 0，即不受重力影响</p>
+<h2 id="具体步骤">具体步骤</h2>
+<ul>
+<li>
+<p>首先为角色添加Character物理属性（中文翻译应该是角色）<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/bge_slide/20201206090802465.png" alt="在这里插入图片描述" loading="lazy"></p>
+</li>
+<li>
+<p>在逻辑编辑器中为角色添加以下节点<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/bge_slide/20201206090836356.png" alt="在这里插入图片描述" loading="lazy"></p>
+</li>
+<li>
+<p>anti slide脚本：</p>
+</li>
+</ul>
+<pre><code class="language-python">import bge
+
+def main():
+
+    cont = bge.logic.getCurrentController()
+    own = cont.owner
+    ground = cont.sensors['Collision']
+    
+    key = cont.sensors['Keyboard']
+    
+    char=bge.constraints.getCharacter(own)
+    
+    if key.positive:
+        char.gravity = 29
+    else:
+        if ground.positive:
+            char.gravity = 0
+        else:
+            char.gravity = 29
+main()
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://ayosi1996.github.io/tag/qoVlYcAAe/" class="tag">
+                    Blender
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://ayosi1996.github.io/post/shader-basic-001/">
+                  <h3 class="post-title">
+                    Shader基础知识
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+
+  </body>
+</html>

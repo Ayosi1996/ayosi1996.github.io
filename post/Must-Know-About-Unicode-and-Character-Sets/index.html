@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>每个软件开发人员必须了解的 Unicode 和字符集基础知识（译） | Sqrt9</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://ayosi1996.github.io/favicon.ico?v=1679230816049">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ayosi1996.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="有没有想过那个神秘的 Content-Type 标签？ 就是你知道应该放入 HTML里，但又不是很确定应该写什么的那个标签。
+
+原文：The Absolute Minimum Every Software Developer Absolut..." />
+    <meta name="keywords" content="Program" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://ayosi1996.github.io">
+        <img src="https://ayosi1996.github.io/images/avatar.png?v=1679230816049" class="site-logo">
+        <h1 class="site-title">Sqrt9</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://ayosi1996.github.io" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="https://ayosi1996.github.io/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://ayosi1996.github.io/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/Sqrt9SD" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Hi there!
+    </div>
+    <div class="site-footer">
+      Powered by Gridea | <a class="rss" href="https://ayosi1996.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">每个软件开发人员必须了解的 Unicode 和字符集基础知识（译）</h2>
+            <div class="post-date">2020-12-30</div>
+            
+              <div class="feature-container" style="background-image: url('https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/unicode_learn/9402f7975a1e46c8bd9d070684105e96.png')">
+              </div>
+            
+            <div class="post-content" v-pre>
+              <p>有没有想过那个神秘的 Content-Type 标签？ 就是你知道应该放入 HTML里，但又不是很确定应该写什么的那个标签。</p>
+<!-- more -->
+<p>原文：<a href="https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/">The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)</a></p>
+<p>你有没有收到过你在保加利亚的朋友发来的主题是“???? ?????? ??? ????”的邮件？</p>
+<p>我发现有很多软件开发人员并没有真正地了解字符集、编码、Unicode 等等这类相关的知识。 几年前，<a href="https://fogbugz.com/">FogBUGZ</a> 的 一个beta 测试人员想知道他们网站是否能处理日文的电子邮件。 日语？ 他们居然还有日语的电子邮件？ 超乎我想象。 然后当我仔细查看我们用来解析 MIME 电子邮件消息的商业 ActiveX 控件时，我们发现它在字符集方面的处理是完全是错误的，为了能让控件正常工作，我们不得不又重写了一遍代码。 当我查看另一个商业库时，发现也是一个完全不能用的字符代码处理方式。 我联系了该软件的开发人员，他认为他们“对此也无能为力”。 像许多程序员一样，只要赶快完成自己的部分工作就好，其他的就跟我没关系了。</p>
+<p>而且我发现广受欢迎的 Web 开发工具 PHP 几乎<a href="https://www.php.net/manual/en/language.types.string.php">完全无视字符编码问题</a>，很随意地使用 8 位字符，这种情况下怎么可能开发出好的国际端Web 应用。我觉得是时候做出一点改变了。</p>
+<p>所以在此我宣布一下：如果你是 2003 年工作的程序员，你还不知道字符、字符集、编码和 Unicode 的相关基础知识，我会把你抓住，然后让你在潜艇里剥上6个月的洋葱。 我认真的，别不信。</p>
+<p>而且：</p>
+<center><font size = 4><b>这些并没有你想象中那么困难。</b></font></center>
+<br>
+<p>在本文中，我会向你详细介绍当下每个程序员都应该知道的知识。所有关于“纯文本(plain text) = ascii = 8位字符”的内容不仅是错误的，而且是完全错误的，如果你还在带着这种想法编程，那你比不相信细菌存在的医生也好不到哪去。在你阅读完本文之前，请一行代码也不要再写了。</p>
+<p>在开始之前，我提醒一下，如果你之前就已经了解国际化，你会发现下面的内容对你来说有点过于简单了。因为我这里只想提供关于字符知识的最基础的部分，以让每个开发者都能理解字符的具体工作原理，并且能够编写处理任何语言文本的代码，不再只是处理英语。声明一下，字符处理只是创建国际化软件中的一小部分，但我一次只关注一点内容，所以今天主要写字符集相关的。</p>
+<h2 id="font-color-0077bb历史发展font"><font color = #0077bb>历史发展</font></h2>
+<p>理解字符内容最简单的方式就是回顾字符的发展历史。</p>
+<p>你可能以为我要从非常古老的字符集开始，例如 EBCDIC。 放心，我不会的。 EBCDIC跟你的生活已经没有半毛钱关系了。 我们不用回顾那么久远。<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/unicode_learn/ascii.png" alt="" loading="lazy"></p>
+<p>回到近现代，当 Unix 被发明并且 K&amp;R 正在编写 <a href="http://cm.bell-labs.com/cm/cs/cbook/">C语言</a>时，一切都还很简单。 EBCDIC 正在逐渐淡出历史舞台。唯一重要的字符是遗留下来的不带重音的英文字母，我们为这些字符编写了一个称为 ASCII 的符号表，它能够使用 32 到 127 之间的数字来表示每个字符。例如空格是 32，字母“A”是 65，等等。字符现在可以很方便地存储在 7 bit中。那个年代的大多数计算机使用的都是 8 位字节，因此你不仅可以存储所有可能的 ASCII 字符，而且你还有整整1bit的剩余空间，如果你想的话，你可以将其用于自己的用途。小于数字32 的字符称为不可显示字符，被用于诅咒的目的（开玩笑的:D）。它们其实被当作控制字符，比如 7 让你的计算机发出哔哔声，而 12 则可以让当前纸张飞出打印机并塞入一张新纸张。</p>
+<p>目前一切看起来都还很正常，但前提是你是个英语母语者。<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/unicode_learn/oem.png" alt="" loading="lazy"></p>
+<p>因为字节最多可容纳 8 位，所以很多人开始想要把 128-255 用于他们自己的目的。问题是，其他人也是这么想的，他们对从 128 到 255 中的位置分别有自己的想法。 IBM-PC 提供了一种后来被称为 OEM 字符集的东西，它为欧洲语言提供了一些带重音的字符和一堆线条字符……横条、竖条、右侧有小垂悬的横条等等（上图），你可以用这些线条字符来绘制优美的框框的和屏幕上的线条，现在你仍然可以在干洗店的 8088 计算机上看到这些线条。事实上，在美国之外的国家，人们也开始购买 PC，各种不同的 OEM 字符集便随之出现，它们都将剩余的128 个字符用于了自己的目的。例如，在某些 PC 上，字符代码 130 将显示为 é，但在以色列销售的计算机上，130对应的是希伯来字母 Gimel (ג)，因此如果当美国人将 résumés 发送到以色列时，会被显示为 rגsumגs。甚至俄罗斯人自己，对于如何使用剩余的128 个字符有就很多不同的想法，因此两人之间无法可靠地交换俄语文档。</p>
+<p>最终，OEM 的自由放任策略在ANSI标准中被规范化。在 ANSI 标准中，数字128以下对应的表示全部统一，与 ASCII 几乎相同，但是有很多不同的方式来处理 128 及以上的字符，这取决于你住在哪里。这些不同的标准被称为<a href="http://www.i18nguy.com/unicode/codepages.html#msftdos">代码页</a>。因此，例如在以色列，DOS 使用了一个名为 862 的代码页，而希腊用户使用了名为737的代码页。它们在 128 以下的表示相同，但在 128 以上则不同，所有长相奇怪的字母都会用128以上的数字来表示。国际版的MS-DOS 就有几十个这样的代码页，处理从英语到冰岛语的所有内容，他们甚至有一些“多语言”代码页，可以在同一台计算机上使用世界语或加利西亚语！<s>但是，在同一台计算机上显示希伯来语和希腊语是完全不可能的，除非你自己编写程序用位图绘制所有内容，因为希伯来语和希腊语需要不同的代码页，并且对128 以上的字符有着不同的解释</s>。</p>
+<p>亚洲的情况更加复杂，因为亚洲字符表有数千个字符，而且这些字符是不可能放到一个8位的字节里的。 之后出现了一个称为 DBCS 的系统，它提出了一种解决方案，叫“双字节字符集”，即一些字符用一个字节存储，其他则用两字节来存储。 在一个字符串里向前移动很容易，但向后移动几乎不可能。 鼓励程序员不要使用 s++ 和 s– 来前后移动，而是调用诸如 Windows 的 AnsiNext 和 AnsiPrev 之类的函数，它们知道如何处理这个复杂的字符系统。</p>
+<p>但是，大多数人还是假定一个字节就是一个字符，一个字符就是8bit，只要你不把字符串从一台计算机发送到另一台计算机，或者没使用超过一种语言，你的系统就可以正常工作。 但是，互联网出现之后，将字符串从一台计算机发送到另一台计算机变成很常见的一件事，整个系统也就崩溃了。 幸运的是，Unicode发明了。</p>
+<h2 id="font-color-0077bbunicodefont"><font color = #0077bb>Unicode</font></h2>
+<p>Unicode 是一个很勇敢的尝试，它创建了一个单一的字符集，里面包括了这个星球上所有合理的文字系统甚至还有一些像克林贡语这样的虚构系统。 有人错误地认为 Unicode 只是一个 16 位的码，每个字符占 16 位，因此有 65,536 种可能的字符。 <strong>这实际上并不准确</strong>。 这是关于 Unicode 一个最常见的误区。</p>
+<p>Unicode 看待字符的方式是不同的，你必须了解 Unicode 的思维方式，否则不会明白其中的原理。</p>
+<p>假设一个字母在磁盘或内存中的存储如下所示：</p>
+<p>A -&gt; 0100 0001</p>
+<p>在 Unicode 中，一个字母映射到一个称为代码点（code point）的东西，代码点你只要当作一个理论概念就行。 该代码点（后面我会直接称为Unicode码）如何在内存或磁盘中表示才是关键点所在。</p>
+<p>在 Unicode 中，柏拉图字母<font size = 5>A</font> 不同于 <font size = 5>B</font>，也不同于 <font size = 5>a</font>，但是 <font size = 5>A</font> 、 <font size = 5><b><em>A</em></b></font> 还有 A 是相同的。 Times New Roman 字体中的 A 与 Helvetica 字体中的 A 相同，但与小写的“a&quot;是不同的，看起来没有任何异议，但在某些语言中，仅仅弄清楚字母究竟表示什么就是一件值得讨论的事了。比如德语字母 ß 是一个真正的字母还是 ss 的一种奇特的写法？ 如果一个字母的形状发生变化，那他们是不同的字母吗？ 希伯来人觉得是，但阿拉伯人觉得不是。 无论如何，Unicode 协会的人在过去十年左右的时间里一直在解决这个问题，期间还有很多政治化的辩论。不过还好，他们已经找到解决方案了。</p>
+<p>每种语言字母表中的每个字母都被 Unicode 协会分配了一个”魔数“，类似这种形式：<strong>U+0639</strong>。 这个魔数称为代码点（Unicode码）。 U+ 表示“Unicode”，后面数字是以十六进制表示的。 <strong>U+0639</strong> 表示阿拉伯字母 Ain。 英文字母 A 对应 <strong>U+0041</strong>。 你可以用 Windows 2000/XP 上的 <strong>charmap</strong> 工具或访问 <a href="https://home.unicode.org/">Unicode 网站</a>找到任何字符对应的魔数。</p>
+<p>Unicode 能够定义的字符并没有数量上的限制，而且它们已经超过了 65,536个，所以并不是每个 Unicode 字母都可以被压缩成两个字节。</p>
+<p>假设我们有一个字符串：</p>
+<center><b>Hello</b></center>
+<p>在 Unicode 中，它对应于下面五个Unicode码：</p>
+<center>U+0048 U+0065 U+006C U+006C U+006F.</center><br>
+<p>这还只是一堆Unicode码。我还没讲述如何将其存储在内存中或在电子邮件中表示。</p>
+<h2 id="font-color-0077bbencodings-编码font"><font color = #0077bb>Encodings （编码）</font></h2>
+<p>于是编码出现了。</p>
+<p>Unicode 编码的早期想法缔造了“两个字节包揽一切”的神话，假设我们将这些数字分别存储在两个字节中。 所以Hello就会变成</p>
+<center>00 48 00 65 00 6C 00 6C 00 6F</center><br>
+或者也可以表示为：
+<center>48 00 65 00 6C 00 6C 00 6F 00 ?</center><br>
+<p>从技术上来讲，这两种方法都可以，事实上，早期的实现者希望能够选用大端或小端方式其中之一来存储Unicode 码，不管你CPU处理起来快还是慢。但是既然有两种方法，就会出现分歧。 所以人们被迫想出了在每个 Unicode 字符串的开头添加 FE FF 的奇怪约定； 这两个字节称为 <a href="https://docs.microsoft.com/en-us/globalization/encoding/byte-order-mark">Unicode 字节序标记</a>，如果你交换高位字节和低位字节，字节序标记就会变成 FF FE，读取字符串的人就知道他们也必须交换后面每个字符的字节顺序。但是注意并不是每个 Unicode 字符串的开头都有字节序标记。</p>
+<p>过了一段时间，有的程序员开始抱怨：“看那一大串没用的0！”说这些话的是美国人，因为他们很少用 U+00FF 以上的Unicode码。 而且他们无法忍受将字符串的存储量增加一倍的实现方式，出于这个原因，很多人开始不用 Unicode了，情况变得越来越糟。</p>
+<p>基于这种情况，巧妙的<a href="https://www.cl.cam.ac.uk/~mgk25/ucs/utf-8-history.txt">UTF-8被发明了出来</a> 。 <a href="https://www.utf8.com/">UTF-8</a> 是另一种在内存中使用 8 位字节存储 Unicode 码（U+数字）的系统。 在 UTF-8 中，从 0 到 127 的每个Unicode码都存储在一个字节中。 只有 128 及以上的Unicode码才使用2-6个字节去存储。<br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/unicode_learn/utf8.png" alt="" loading="lazy"></p>
+<p>这会让英文文本在 UTF-8 中和在 ASCII 中看起来完全相同，因此美国人完全不会察觉到有任何异样。 比如说，<strong>Hello</strong>，即 U+0048 U+0065 U+006C U+006C U+006F，会被储存为 48 65 6C 6C 6F，与 ASCII、ANSI 和地球上的每个 OEM 字符集表示都是相同的。 现在，如果你可以随意使用带重音的字母、希腊字母或克林贡字母了，只不过你需要用多个字节来存储单个Unicode码，但美国人永远不会注意到这个问题。 （UTF-8 还有一个很好的特性，即使用单个 0 字节作为终止符的古老字符串处理代码也不会截断字符串）。</p>
+<p>到目前为止，我已经讲了两种编码 Unicode 的方法。 传统的store-it-in-two-byte方法被称为UCS-2（因为它有两个字节）或UTF-16（因为它有16位），但你还是要弄清楚它是大端UCS- 2 还是小端 UCS-2。 还有当前最流行的 UTF-8 标准。</p>
+<p>实际上有很多其他编码 Unicode 的方法。比如 UTF-7 ，它很像 UTF-8，但高位永远是零。还有一种方法叫UCS-4，它将每个Unicode码存储在 4 个字节中，它有一个很好的特性，即每个Unicode码都可以存储在相同数量的字节中，但是，这种方法太过于浪费内存。</p>
+<p>事实上，由 Unicode 码表示的字母，它们的 Unicode 码也可以用老式的编码方案进行编码！比如，你可以将 Hello 的 Unicode 字符串 (U+0048 U+0065 U+006C U+006C U+006F) 编码为 ASCII、旧的 OEM 希腊语编码、希伯来语 ANSI 编码或数百种编码中的任何一种。但是会有个小问题：有些字母可能不会出现！如果在你的目标编码中没有与尝试表示的 Unicode 码对应的等价符号，你通常会得到一个小问号： ? 或者，一个方框。或者他们的合体 -&gt; �</p>
+<p>有数百种传统的编码方式，但它们都只能正确地表示一部分Unicode码，而其他的Unicode码都会被表示为 <em>问号</em>。 常见的英文文本编码有 Windows-1252（适用于西欧语言的 Windows 9x 标准）和 <a href="https://www.htmlhelp.com/reference/charset/">ISO-8859-1</a>，也叫 Latin-1（也适用于任何西欧语言）。 但是如果以这些编码存储俄语或希伯来语字母，你会得到一堆问号。而相比之下 UTF 7、8、16 和 32 就能够正确存储任何Unicode码。</p>
+<h2 id="font-color-0077bb关于编码的一个最重要的事实font"><font color = #0077bb>关于编码的一个最重要的事实</font></h2>
+<p>如果你已经完全忘记了我刚刚讲的内容，那请你记住一个非常重要的事实。** 就是在你不知道它使用什么编码的情况下，一个字符串是没有任何意义的**。 你不能再把头蒙在鼓里，然后假装“纯”文本(plain text)就是 ASCII。</p>
+<center><b>世界上没有纯文本（plain text）这种东西。</b></center><br>
+<p>如果在内存、文件或电子邮件消息中有一个字符串，你必须知道它是什么编码，否则你就无法正确表示或向用户显示它。</p>
+<p>几乎所有像“我的网站看起来像是在胡言乱语”或“当我使用带重音的字母时她看不懂我的电子邮件”这种愚蠢的问题都可以归结为一个天真的程序员，他不明白一个简单的事实，即如果你不告诉我这个字符串是用 UTF-8 或 ASCII 或 ISO 8859-1（Latin-1）还是 Windows 1252（西欧）编码的，就没办法正确显示这个字符串，甚至根本不知道字符串从哪里截断。</p>
+<p>那么我们应该如何保存<em>字符串用的什么编码</em> 的信息呢？这里有几种常见的方法。 对于电子邮件，在表单的标题中应该会有一串字符：</p>
+<blockquote>
+<p><font color = #00000><strong>Content-Type: text/plain; charset=&quot;UTF-8&quot;</strong></font></p>
+</blockquote>
+<p>对于网页，最初的想法是 Web 服务器与网页本身一起返回一个类似的 <strong>Content-Type</strong> http 头信息，注意不是放在 HTML 网页内容中，而是放在HTML页面到达之前发送的响应头信息中。</p>
+<p>但这会导致一些问题。假设你有一个大型 Web 服务器，其中包含许多站点和数百个页面，这些页面由世界各地的人以各种不同的语言贡献而成，并且他们都使用自认为最合适的编码。 Web 服务器本身并不知道每个文件是用什么编码编写的，因此它根本无法发送 Content-Type 头信息。</p>
+<p>如果你可以使用某种特殊标签将 HTML 文件的 Content-Type 直接放在 HTML 文件中，会方便很多。当然，这会让强迫症疯掉的……但是在知道它的编码之前，你是无法去读一个 HTML 文件的。幸运的是，几乎所有常用的编码对 32 到 127 之间的字符都会执行相同的操作，所以你永远可以在 HTML 页面上用32 到 127 之间的字符去做些标记信息，而不是去用那些奇奇怪怪的字符：</p>
+<blockquote>
+<p><font color = #00000><strong>&lt;html&gt;</strong></font><br>
+<font color = #00000><strong>&lt;head&gt;</strong></font><br>
+<font color = #00000><strong>&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</strong></font></p>
+</blockquote>
+<p>但是这些标记信息必须位于 <head> 标头中的最开始部分，因为一旦 Web 浏览器看到编码标记，它就会停止解析页面并使用你指定的编码重新解析整个页面。</p>
+<p>如果 Web 浏览器在 http 头信息或元标记中找不到任何 Content-Type标签，它们会怎么办呢？ Internet Explorer 实际上做了一些非常有趣的事情：它会试图根据不同字节出现的频率去猜测使用了哪种语言和编码。因为各种老旧的 8 位代码页倾向于将他们国家的字母放在 128 到 255 之间的范围内，并且每种语言都有不同的字母使用频率分布，所以这种方法还是有点用的。这听起来可能有点奇怪，但它确实有用，以至于那些初级网页开发者从没觉得他们需要在网页中添加 Content-Type 头信息，因为在 Web 浏览器中查看他们的页面，看起来都很正常，直到有一天他们写了一些不同于他们母语的内容，然后 Internet Explorer 觉得这是韩语并决定以韩语的方式去解析，BOOM！<s>Anyway，一位用保加利亚语编写但显示为韩语（甚至不是正常的韩语）的可怜读者会做些什么？他使用视图 |编码菜单并尝试一堆不同的编码（东欧语言至少有十几种），直到图片变得更清晰。他知道这样做，但大多数人并不知道。</s><br>
+<img src="https://raw.githubusercontent.com/Ayosi1996/pic/master/blog_imgs/unicode_learn/rose.jpg" alt="" loading="lazy"></p>
+<p>对于<a href="https://glitch.com">我们公司</a>发布的网站管理软件 <a href="https://glitch.com/about">CityDesk</a> 的最新版本，我们决定内部使用 UCS-2（两字节）编码方式，这也被 Visual Basic、COM 和 Windows NT/2000/XP 当作原生的字符串编码方式。 <s>在 C++ 代码中，我们只是将字符串声明为 <strong>wchar_t</strong>（“宽字符”）而不是 <strong>char</strong>，并使用 <strong>wcs</strong> 函数而不是 <strong>str</strong> 函数（例如 <strong>wcscat</strong> 和 <strong>wcslen</strong> 而不是 <strong>strcat</strong> 和 <strong>strlen</strong>）。 要在 C 代码中创建文字 UCS-2 字符串，你只需在它前面放一个 L，如：<strong>L&quot;Hello&quot;</strong></s>。</p>
+<p>CityDesk 发布网页时，会将其转换为 UTF-8 编码，该编码多年来一直受到浏览器的良好支持。 这就是 Joel on Software 的所有 <a href="https://www.joelonsoftware.com/other-languages/">29 种语言版本</a>的编码方式，至今我还没听说过有人在查看它们时有遇到过问题。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://ayosi1996.github.io/tag/RRqzF97wT/" class="tag">
+                    Program
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://ayosi1996.github.io/post/unity-shi-yong-bsp-cheng-xu-hua-sheng-cheng-di-tu/">
+                  <h3 class="post-title">
+                    Unity 使用BSP程序化生成地图
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+
+  </body>
+</html>
